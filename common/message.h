@@ -28,12 +28,12 @@ struct Message {
     QByteArray serialize() const;
     static Message deserialize(const QByteArray& data);
 
-    static Message createPolynom(int degree, const QString& leadingCoeff, const QVector<QString>& roots);
-    static Message changeLeadingCoeff(const QString& newCoeff);
-    static Message changeRoot(int index, const QString& newRoot);
-    static Message evaluate(const QString& point);
-    static Message getForm1();
-    static Message getForm2();
+    static Message createPolynom(int numberType, int degree, const QString& leadingCoeff, const QVector<QString>& roots);
+    static Message changeLeadingCoeff(int numberType, const QString& newCoeff);
+    static Message changeRoot(int numberType, int index, const QString& newRoot);
+    static Message evaluate(int numberType, const QString& point);
+    static Message getForm1(int numberType);
+    static Message getForm2(int numberType);
     static Message success(const QString& result);
     static Message error(const QString& errorMessage);
 };

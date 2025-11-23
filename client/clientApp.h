@@ -15,13 +15,12 @@ public:
 
     bool start(quint16 clientPort = 10000, quint16 serverPort = 10001);
 
-    // Методы для взаимодействия с сервером
-    void createPolynom(int degree, const QString& leadingCoeff, const QVector<QString>& roots);
-    void changeLeadingCoeff(const QString& newCoeff);
-    void changeRoot(int index, const QString& newRoot);
-    void evaluate(const QString& point);
-    void getForm1();
-    void getForm2();
+    void createPolynom(int numberType, int degree, const QString& leadingCoeff, const QVector<QString>& roots);
+    void changeLeadingCoeff(int numberType, const QString& newCoeff);
+    void changeRoot(int numberType, int index, const QString& newRoot);
+    void evaluate(int numberType, const QString& point);
+    void getForm1(int numberType);
+    void getForm2(int numberType);
 
 signals:
     void responseReceived(const QString& result);

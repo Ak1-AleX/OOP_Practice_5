@@ -15,8 +15,9 @@ Message Message::deserialize(const QByteArray& data) {
     return msg;
 }
 
-Message Message::createPolynom(int degree, const QString& leadingCoeff, const QVector<QString>& roots) {
+Message Message::createPolynom(int numberType, int degree, const QString& leadingCoeff, const QVector<QString>& roots) {
     QVector<QString> params;
+    params.append(QString::number(numberType));
     params.append(QString::number(degree));
     params.append(leadingCoeff);
     for (const QString& root : roots) {
@@ -25,24 +26,38 @@ Message Message::createPolynom(int degree, const QString& leadingCoeff, const QV
     return Message(MessageType::CREATE_POLYNOM, "Create polynom", params);
 }
 
-Message Message::changeLeadingCoeff(const QString& newCoeff) {
-    return Message(MessageType::CHANGE_LEADING_COEFF, "Change leading coefficient", {newCoeff});
+Message Message::changeLeadingCoeff(int numberType, const QString& newCoeff) {
+    QVector<QString> params;
+    params.append(QString::number(numberType));
+    params.append(newCoeff);
+    return Message(MessageType::CHANGE_LEADING_COEFF, "Change leading coefficient", params);
 }
 
-Message Message::changeRoot(int index, const QString& newRoot) {
-    return Message(MessageType::CHANGE_ROOT, "Change root", {QString::number(index), newRoot});
+Message Message::changeRoot(int numberType, int index, const QString& newRoot) {
+    QVector<QString> params;
+    params.append(QString::number(numberType));
+    params.append(QString::number(index));
+    params.append(newRoot);
+    return Message(MessageType::CHANGE_ROOT, "Change root", params);
 }
 
-Message Message::evaluate(const QString& point) {
-    return Message(MessageType::EVALUATE, "Evaluate polynom", {point});
+Message Message::evaluate(int numberType, const QString& point) {
+    QVector<QString> params;
+    params.append(QString::number(numberType));
+    params.append(point);
+    return Message(MessageType::EVALUATE, "Evaluate polynom", params);
 }
 
-Message Message::getForm1() {
-    return Message(MessageType::GET_FORM1, "Get coefficients form");
+Message Message::getForm1(int numberType) {
+    QVector<QString> params;
+    params.append(QString::number(numberType));
+    return Message(MessageType::GET_FORM1, "Get coefficients form", params);
 }
 
-Message Message::getForm2() {
-    return Message(MessageType::GET_FORM2, "Get roots form");
+Message Message::getForm2(int numberType) {
+    QVector<QString> params;
+    params.append(QString::number(numberType));
+    return Message(MessageType::GET_FORM2, "Get roots form", params);
 }
 
 Message Message::success(const QString& result) {

@@ -8,13 +8,16 @@ TComplex::TComplex(double r, double i) : re(r), im(i) {}
 TComplex TComplex::operator+(const TComplex& other) const {
     return TComplex(re + other.re, im + other.im);
 }
+
 TComplex TComplex::operator-(const TComplex& other) const {
     return TComplex(re - other.re, im - other.im);
 }
+
 TComplex TComplex::operator*(const TComplex& other) const {
     return TComplex(re * other.re - im * other.im,
                     re * other.im + im * other.re);
 }
+
 TComplex TComplex::operator/(const TComplex& other) const {
     double denom = other.re * other.re + other.im * other.im;
     return TComplex((re * other.re + im * other.im) / denom,
@@ -24,6 +27,7 @@ TComplex TComplex::operator/(const TComplex& other) const {
 bool TComplex::operator==(const TComplex& other) const {
     return re == other.re && im == other.im;
 }
+
 bool TComplex::operator!=(const TComplex& other) const {
     return !(*this == other);
 }
@@ -31,7 +35,6 @@ bool TComplex::operator!=(const TComplex& other) const {
 double TComplex::abs() const {
     return std::sqrt(re * re + im * im);
 }
-
 
 int TComplex::compare(const TComplex& other) const {
     double r1 = abs();
@@ -47,7 +50,6 @@ int TComplex::compare(const TComplex& other) const {
     return 0;
 }
 
-// Новые методы для Qt GUI
 QString TComplex::toString() const {
     if (im == 0) return QString::number(re);
     else if (re == 0) return QString::number(im) + "i";
@@ -57,20 +59,16 @@ QString TComplex::toString() const {
 TComplex TComplex::fromString(const QString& str) {
     QString s = str.trimmed();
     if (s.contains('i')) {
-        // Комплексное число
         if (s.contains('+') || (s.contains('-') && s.lastIndexOf('-') > 0)) {
-            // Формат a+bi или a-bi
             int opPos = qMax(s.lastIndexOf('+'), s.lastIndexOf('-'));
             double realPart = s.left(opPos).toDouble();
             double imagPart = s.mid(opPos, s.length() - opPos - 1).toDouble();
             return TComplex(realPart, imagPart);
         } else {
-            // Только мнимая часть
             double imagPart = s.remove('i').toDouble();
             return TComplex(0, imagPart);
         }
     } else {
-        // Только действительная часть
         return TComplex(s.toDouble(), 0);
     }
 }

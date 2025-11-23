@@ -2,16 +2,21 @@
 #include <cmath>
 #include <algorithm>
 #include <QDebug>
+#include "complex.h"
 
 using namespace std;
 
-Array::Array() : data() {}
+template<typename T>
+Array<T>::Array() : data() {}
 
-Array::Array(int n, number val) : data(n, val) {}
+template<typename T>
+Array<T>::Array(int n, T val) : data(n, val) {}
 
-Array::Array(const Array& other) : data(other.data) {}
+template<typename T>
+Array<T>::Array(const Array& other) : data(other.data) {}
 
-void Array::resize(int newSize) {
+template<typename T>
+void Array<T>::resize(int newSize) {
     if (newSize > 0) {
         data.resize(newSize);
     } else {
@@ -19,66 +24,73 @@ void Array::resize(int newSize) {
     }
 }
 
-void Array::setElement(int index, number val) {
+template<typename T>
+void Array<T>::setElement(int index, T val) {
     if (index >= 0 && index < data.size()) {
         data[index] = val;
-    } else {
-        qDebug() << "Array::setElement: index out of bounds" << index << "size:" << data.size();
     }
 }
 
-number Array::getElement(int index) const {
+template<typename T>
+T Array<T>::getElement(int index) const {
     if (index >= 0 && index < data.size()) {
         return data[index];
     }
-    qDebug() << "Array::getElement: index out of bounds" << index << "size:" << data.size();
-    return number(0.0, 0.0);
+    return T(0.0);
 }
 
-number Array::average() const {
-    if (data.isEmpty()) return number(0.0, 0.0);
+template<typename T>
+T Array<T>::average() const {
+    if (data.isEmpty()) return T(0.0);
 
     double sumRe = 0, sumIm = 0;
-    for (const number& num : data) {
+    for (const T& num : data) {
         sumRe += num.real();
         sumIm += num.imag();
     }
-    return number(sumRe / data.size(), sumIm / data.size());
+    return T(sumRe / data.size(), sumIm / data.size());
 }
 
-number Array::deviation() const {
-    if (data.isEmpty()) return number(0.0, 0.0);
+template<typename T>
+T Array<T>::deviation() const {
+    if (data.isEmpty()) return T(0.0);
 
-    number avg = average();
+    T avg = average();
     double sum = 0;
-    for (const number& num : data) {
+    for (const T& num : data) {
         double dRe = num.real() - avg.real();
         double dIm = num.imag() - avg.imag();
         double distance = sqrt(dRe * dRe + dIm * dIm);
         sum += distance * distance;
     }
-    return number(sqrt(sum / data.size() - 1), 0);
+    return T(sqrt(sum / data.size() - 1), 0);
 }
 
-void Array::sortAsc() {
+template<typename T>
+void Array<T>::sortAsc() {
     if (!data.isEmpty()) {
-        sort(data.begin(), data.end(), [](const number& a, const number& b) {
+        sort(data.begin(), data.end(), [](const T& a, const T& b) {
             return a.compare(b) < 0;
         });
     }
 }
 
-void Array::sortDesc() {
+template<typename T>
+void Array<T>::sortDesc() {
     if (!data.isEmpty()) {
-        sort(data.begin(), data.end(), [](const number& a, const number& b) {
+        sort(data.begin(), data.end(), [](const T& a, const T& b) {
             return a.compare(b) > 0;
         });
     }
 }
 
-Array& Array::operator=(const Array& other) {
+template<typename T>
+Array<T>& Array<T>::operator=(const Array& other) {
     if (this != &other) {
         data = other.data;
     }
     return *this;
 }
+
+// Явная инстанциация шаблонов
+template class Array<TComplex>;

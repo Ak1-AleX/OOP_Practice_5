@@ -24,33 +24,33 @@ bool ClientApp::start(quint16 clientPort, quint16 serverPort) {
     return communicator->startClient(clientPort, serverPort);
 }
 
-void ClientApp::createPolynom(int degree, const QString& leadingCoeff, const QVector<QString>& roots) {
-    Message request = Message::createPolynom(degree, leadingCoeff, roots);
+void ClientApp::createPolynom(int numberType, int degree, const QString& leadingCoeff, const QVector<QString>& roots) {
+    Message request = Message::createPolynom(numberType, degree, leadingCoeff, roots);
     sendRequest(request);
 }
 
-void ClientApp::changeLeadingCoeff(const QString& newCoeff) {
-    Message request = Message::changeLeadingCoeff(newCoeff);
+void ClientApp::changeLeadingCoeff(int numberType, const QString& newCoeff) {
+    Message request = Message::changeLeadingCoeff(numberType, newCoeff);
     sendRequest(request);
 }
 
-void ClientApp::changeRoot(int index, const QString& newRoot) {
-    Message request = Message::changeRoot(index, newRoot);
+void ClientApp::changeRoot(int numberType, int index, const QString& newRoot) {
+    Message request = Message::changeRoot(numberType, index, newRoot);
     sendRequest(request);
 }
 
-void ClientApp::evaluate(const QString& point) {
-    Message request = Message::evaluate(point);
+void ClientApp::evaluate(int numberType, const QString& point) {
+    Message request = Message::evaluate(numberType, point);
     sendRequest(request);
 }
 
-void ClientApp::getForm1() {
-    Message request = Message::getForm1();
+void ClientApp::getForm1(int numberType) {
+    Message request = Message::getForm1(numberType);
     sendRequest(request);
 }
 
-void ClientApp::getForm2() {
-    Message request = Message::getForm2();
+void ClientApp::getForm2(int numberType) {
+    Message request = Message::getForm2(numberType);
     sendRequest(request);
 }
 
@@ -62,7 +62,7 @@ void ClientApp::sendRequest(const Message& request) {
 
     communicator->sendMessage(request);
     waitingForResponse = true;
-    responseTimer->start(5000); // Таймаут 5 секунд
+    responseTimer->start(5000);
 
     qDebug() << "Запрос отправлен серверу, тип:" << static_cast<int>(request.type);
 }

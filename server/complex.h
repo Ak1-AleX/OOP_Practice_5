@@ -17,13 +17,11 @@ public:
     void setReal(double r) { re = r; }
     void setImag(double i) { im = i; }
 
-    // арифметика
     TComplex operator+(const TComplex& other) const;
     TComplex operator-(const TComplex& other) const;
     TComplex operator*(const TComplex& other) const;
     TComplex operator/(const TComplex& other) const;
 
-    // оператор присваивания
     TComplex& operator=(const TComplex& other) {
         if (this != &other) {
             re = other.re;
@@ -32,17 +30,12 @@ public:
         return *this;
     }
 
-    // сравнение
     bool operator==(const TComplex& other) const;
     bool operator!=(const TComplex& other) const;
 
-    // модуль
     double abs() const;
-
-    // сравнение по модулю и аргументу
     int compare(const TComplex& other) const;
 
-    // методы для строкового представления
     QString toString() const;
     static TComplex fromString(const QString& str);
 };

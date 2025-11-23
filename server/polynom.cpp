@@ -3,42 +3,42 @@
 #include <QString>
 #include <QVector>
 #include <QDebug>
+#include "complex.h"
 
-Polynom::Polynom() : degree(0), leadingCoeff(number(1.0, 0.0)) {
-    coefficients = Array(1, number(0.0, 0.0));
-    roots = Array(0);
+template<typename T>
+Polynom<T>::Polynom() : degree(0), leadingCoeff(T(1.0, 0.0)) {
+    coefficients = Array<T>(1, T(0.0, 0.0));
+    roots = Array<T>(0);
 }
 
-Polynom::Polynom(int n, number an) : degree(n), leadingCoeff(an) {
+template<typename T>
+Polynom<T>::Polynom(int n, T an) : degree(n), leadingCoeff(an) {
     if (n > 0) {
-        coefficients = Array(n + 1, number(0.0, 0.0));
-        roots = Array(n, number(0.0, 0.0));
+        coefficients = Array<T>(n + 1, T(0.0, 0.0));
+        roots = Array<T>(n, T(0.0, 0.0));
         coefficients.setElement(n, an);
     } else {
         degree = 0;
-        coefficients = Array(1, number(0.0, 0.0));
-        roots = Array(0);
+        coefficients = Array<T>(1, T(0.0, 0.0));
+        roots = Array<T>(0);
     }
 }
 
-void Polynom::calculateCoefficients() {
+template<typename T>
+void Polynom<T>::calculateCoefficients() {
     if (degree <= 0) {
-        coefficients = Array(1, leadingCoeff);
+        coefficients = Array<T>(1, leadingCoeff);
         return;
     }
 
-    coefficients = Array(degree + 1, number(0.0, 0.0));
-
-    // a_n = leadingCoeff
+    coefficients = Array<T>(degree + 1, T(0.0, 0.0));
     coefficients.setElement(degree, leadingCoeff);
 
-    // Вычисляем остальные коэффициенты через элементарные симметрические полиномы
     for (int k = 1; k <= degree; k++) {
-        number sum = number(0.0, 0.0);
+        T sum = T(0.0, 0.0);
 
-        // Сумма произведений k различных корней
         for (int i = 0; i < degree; i++) {
-            number product = number(1.0, 0.0);
+            T product = T(1.0, 0.0);
             int count = 0;
 
             for (int j = i; j < degree && count < k; j++) {
@@ -51,70 +51,73 @@ void Polynom::calculateCoefficients() {
             }
         }
 
-        // Коэффициент a_{n-k} = (-1)^k * an * sum
         if (k % 2 == 0) {
             coefficients.setElement(degree - k, leadingCoeff * sum);
         } else {
-            coefficients.setElement(degree - k, number(-1.0, 0.0) * leadingCoeff * sum);
+            coefficients.setElement(degree - k, T(-1.0, 0.0) * leadingCoeff * sum);
         }
     }
 }
 
-number Polynom::evaluate(number x) const {
-    if (isEmpty()) return number(0.0, 0.0);
+template<typename T>
+T Polynom<T>::evaluate(T x) const {
+    if (isEmpty()) return T(0.0, 0.0);
 
-    // Схема Горнера
-    number result = coefficients.getElement(degree);
+    T result = coefficients.getElement(degree);
     for (int i = degree - 1; i >= 0; i--) {
         result = result * x + coefficients.getElement(i);
     }
     return result;
 }
 
-number Polynom::getCoefficient(int index) const {
+template<typename T>
+T Polynom<T>::getCoefficient(int index) const {
     if (index >= 0 && index <= degree) {
         return coefficients.getElement(index);
     }
-    return number(0.0, 0.0);
+    return T(0.0, 0.0);
 }
 
-void Polynom::setLeadingCoeff(number an) {
+template<typename T>
+void Polynom<T>::setLeadingCoeff(T an) {
     leadingCoeff = an;
     calculateCoefficients();
 }
 
-void Polynom::setRoot(int index, number root) {
+template<typename T>
+void Polynom<T>::setRoot(int index, T root) {
     if (index >= 0 && index < degree) {
         roots.setElement(index, root);
         calculateCoefficients();
     }
 }
 
-number Polynom::getRoot(int index) const {
+template<typename T>
+T Polynom<T>::getRoot(int index) const {
     if (index >= 0 && index < degree) {
         return roots.getElement(index);
     }
-    return number(0.0, 0.0);
+    return T(0.0, 0.0);
 }
 
-QString Polynom::toStringForm1() const {
+template<typename T>
+QString Polynom<T>::toStringForm1() const {
     if (isEmpty()) return "P(x) = 0";
 
     QString result = "P(x) = ";
     bool firstTerm = true;
 
     for (int i = degree; i >= 0; i--) {
-        number coeff = coefficients.getElement(i);
-        
-        // Пропускаем нулевые коэффициенты (кроме нулей)
-        if (coeff == number(0.0, 0.0)) continue;
+        T coeff = coefficients.getElement(i);
+
+        if (coeff == T(0.0, 0.0)) continue;
 
         if (!firstTerm) {
             if (coeff.real() >= 0 && coeff.imag() >= 0) {
                 result += " + ";
             } else {
                 result += " - ";
-                coeff = number(-coeff.real(), -coeff.imag());
+                coeff = T(-coeff.real(), -coeff.imag());
             }
         }
 
@@ -136,29 +139,34 @@ QString Polynom::toStringForm1() const {
     return result;
 }
 
-QString Polynom::toStringForm2() const {
+template<typename T>
+QString Polynom<T>::toStringForm2() const {
     if (isEmpty()) return "P(x) = 0";
 
     QString result = "P(x) = " + leadingCoeff.toString();
     for (int i = 0; i < degree; i++) {
-        number root = roots.getElement(i);
+        T root = roots.getElement(i);
         result += QString("(x - (%1))").arg(root.toString());
     }
     return result;
 }
 
-void Polynom::setFromRoots(int n, number an, const QVector<number>& rootsList) {
+template<typename T>
+void Polynom<T>::setFromRoots(int n, T an, const QVector<T>& rootsList) {
     degree = n;
     leadingCoeff = an;
-    
+
     if (n > 0) {
-        roots = Array(n, number(0.0, 0.0));
+        roots = Array<T>(n, T(0.0, 0.0));
         for (int i = 0; i < n && i < rootsList.size(); i++) {
             roots.setElement(i, rootsList[i]);
         }
         calculateCoefficients();
     } else {
-        coefficients = Array(1, number(0.0, 0.0));
-        roots = Array(0);
+        coefficients = Array<T>(1, T(0.0, 0.0));
+        roots = Array<T>(0);
     }
 }
+
+// Явная инстанциация шаблонов
+template class Polynom<TComplex>;
